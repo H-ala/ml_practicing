@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>K-Means Cheat Sheet with Extended Parameters and Code</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <div class="container mx-auto p-6 max-w-4xl">
+    <h1 class="text-4xl font-bold text-center text-blue-600 mb-6">چیت‌شیت الگوریتم K-Means</h1>
+    
+    <section class="bg-white rounded-lg shadow-md p-6 mb-6">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-4">پارامترهای کلیدی</h2>
+      <table class="w-full text-gray-600 border-collapse">
+        <thead>
+          <tr class="bg-blue-100">
+            <th class="border p-3">پارامتر</th>
+            <th class="border p-3">توضیح</th>
+            <th class="border p-3">مقادیر ممکن</th>
+            <th class="border p-3">مقدار پیش‌فرض</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="border p-3">n_clusters (k)</td>
+            <td class="border p-3">تعداد خوشه‌ها برای تقسیم‌بندی داده‌ها</td>
+            <td class="border p-3">عدد صحیح مثبت</td>
+            <td class="border p-3">باید توسط کاربر مشخص شود</td>
+          </tr>
+          <tr>
+            <td class="border p-3">init</td>
+            <td class="border p-3">روش انتخاب مراکز اولیه خوشه‌ها</td>
+            <td class="border p-3">'k-means++', 'random', یا آرایه مراکز اولیه</td>
+            <td class="border p-3">'k-means++'</td>
+          </tr>
+          <tr>
+            <td class="border p-3">n_init</td>
+            <td class="border p-3">تعداد اجرای الگوریتم با مراکز اولیه متفاوت</td>
+            <td class="border p-3">عدد صحیح مثبت</td>
+            <td class="border p-3">10</td>
+          </tr>
+          <tr>
+            <td class="border p-3">max_iter</td>
+            <td class="border p-3">حداکثر تعداد تکرارهای الگوریتم</td>
+            <td class="border p-3">عدد صحیح مثبت</td>
+            <td class="border p-3">300</td>
+          </tr>
+          <tr>
+            <td class="border p-3">tol</td>
+            <td class="border p-3">آستانه همگرایی برای توقف</td>
+            <td class="border p-3">عدد اعشاری مثبت</td>
+            <td class="border p-3">1e-4</td>
+          </tr>
+          <tr>
+            <td class="border p-3">random_state</td>
+            <td class="border p-3">دانه تصادفی برای تکرارپذیری</td>
+            <td class="border p-3">عدد صحیح یا None</td>
+            <td class="border p-3">None</td>
+          </tr>
+          <tr>
+            <td class="border p-3">algorithm</td>
+            <td class="border p-3">روش محاسباتی الگوریتم</td>
+            <td class="border p-3">'auto', 'full', 'elkan'</td>
+            <td class="border p-3">'auto'</td>
+          </tr>
+          <tr>
+            <td class="border p-3">distance_metric</td>
+            <td class="border p-3">معیار محاسبه فاصله</td>
+            <td class="border p-3">معمولاً اقلیدسی (یا Manhattan, Minkowski)</td>
+            <td class="border p-3">اقلیدسی</td>
+          </tr>
+          <tr>
+            <td class="border p-3">verbose</td>
+            <td class="border p-3">سطح گزارش‌دهی در حین اجرا</td>
+            <td class="border p-3">0 (بدون گزارش) یا 1 و بیشتر</td>
+            <td class="border p-3">0</td>
+          </tr>
+          <tr>
+            <td class="border p-3">copy_x</td>
+            <td class="border p-3">کپی کردن داده‌های ورودی</td>
+            <td class="border p-3">True یا False</td>
+            <td class="border p-3">True</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="bg-white rounded-lg shadow-md p-6 mb-6">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-4">نمونه کدها</h2>
+      
+      <div class="mb-6">
+        <h3 class="text-xl font-semibold text-blue-600 mb-2">1. K-Means با Scikit-learn روی دیتاست Iris</h3>
+        <p class="text-gray-600 mb-2">این کد دیتاست Iris را خوشه‌بندی کرده و نتایج را با دو ویژگی اول نمایش می‌دهد.</p>
+        <pre class="bg-gray-800 text-white p-4 rounded-lg overflow-x-auto" dir="ltr">
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler
+
+# بارگذاری دیتاست Iris
+iris = load_iris()
+X = iris.data
+y = iris.target  # فقط برای مقایسه (در عمل استفاده نمی‌شود)
+
+# نرمال‌سازی داده‌ها
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# اجرای K-Means
+kmeans = KMeans(n_clusters=3, init='k-means++', n_init=10, max_iter=300, random_state=42)
+labels = kmeans.fit_predict(X_scaled)
+
+# نمایش نتایج (با دو ویژگی اول)
+plt.scatter(X_scaled[:, 0], X_scaled[:, 1], c=labels, s=50, cmap='viridis')
+plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], c='red', s=200, marker='X')
+plt.title('K-Means Clustering on Iris Dataset')
+plt.xlabel(iris.feature_names[0])
+plt.ylabel(iris.feature_names[1])
+plt.savefig('kmeans_iris.png')
+        </pre>
+      </div>
+
+      <div class="mb-6">
+        <h3 class="text-xl font-semibold text-blue-600 mb-2">2. انتخاب k بهینه با Elbow Method</h3>
+        <p class="text-gray-600 mb-2">این کد نمودار آرنج را برای انتخاب k بهینه روی داده‌های تصادفی رسم می‌کند.</p>
+        <pre class="bg-gray-800 text-white p-4 rounded-lg overflow-x-auto" dir="ltr">
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.datasets import make_blobs
+
+# تولید داده‌های تصادفی
+X, _ = make_blobs(n_samples=500, centers=4, cluster_std=0.8, random_state=42)
+
+# محاسبه WCSS برای k‌های مختلف
+wcss = []
+for k in range(1, 11):
+    kmeans = KMeans(n_clusters=k, init='k-means++', n_init=10, max_iter=300, random_state=42)
+    kmeans.fit(X)
+    wcss.append(kmeans.inertia_)
+
+# نمایش نمودار آرنج
+plt.plot(range(1, 11), wcss, marker='o', linestyle='--')
+plt.title('Elbow Method for Optimal k')
+plt.xlabel('Number of Clusters (k)')
+plt.ylabel('Within-Cluster Sum of Squares (WCSS)')
+plt.grid(True)
+plt.savefig('elbow_method.png')
+        </pre>
+      </div>
+
+      <div class="mb-6">
+        <h3 class="text-xl font-semibold text-blue-600 mb-2">3. K-Means با NumPy (پیاده‌سازی دستی)</h3>
+        <p class="text-gray-600 mb-2">پیاده‌سازی دستی الگوریتم K-Means بدون استفاده از کتابخانه‌های خارجی.</p>
+        <pre class="bg-gray-800 text-white p-4 rounded-lg overflow-x-auto" dir="ltr">
+import numpy as np
+import matplotlib.pyplot as plt
+
+def kmeans_numpy(X, k, max_iter=100, tol=1e-4):
+    # انتخاب تصادفی مراکز اولیه
+    np.random.seed(42)
+    centroids = X[np.random.choice(X.shape[0], k, replace=False)]
+    
+    for _ in range(max_iter):
+        # محاسبه فاصله‌ها
+        distances = np.sqrt(((X - centroids[:, np.newaxis])**2).sum(axis=2))
+        labels = np.argmin(distances, axis=0)
+        
+        # به‌روزرسانی مراکز
+        new_centroids = np.array([X[labels == i].mean(axis=0) if len(X[labels == i]) > 0 else centroids[i] for i in range(k)])
+        
+        # بررسی همگرایی
+        if np.all(np.abs(new_centroids - centroids) < tol):
+            break
+        centroids = new_centroids
+    
+    return labels, centroids
+
+# تولید داده‌های تصادفی
+np.random.seed(42)
+X = np.random.randn(300, 2)
+
+# اجرای K-Means
+labels, centroids = kmeans_numpy(X, k=3)
+
+# نمایش نتایج
+plt.scatter(X[:, 0], X[:, 1], c=labels, s=50, cmap='viridis')
+plt.scatter(centroids[:, 0], centroids[:, 1], c='red', s=200, marker='X')
+plt.title('K-Means with NumPy')
+plt.savefig('kmeans_numpy.png')
+        </pre>
+      </div>
+
+      <div>
+        <h3 class="text-xl font-semibold text-blue-600 mb-2">4. K-Means با نرمال‌سازی و مقایسه الگوریتم‌ها</h3>
+        <p class="text-gray-600 mb-2">این کد اثر نرمال‌سازی و مقایسه روش‌های 'lloyd' و 'elkan' را نشان می‌دهد.</p>
+        <pre class="bg-gray-800 text-white p-4 rounded-lg overflow-x-auto" dir="ltr">
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.datasets import make_blobs
+import time
+
+# تولید داده‌های تصادفی با مقیاس‌های متفاوت
+X, _ = make_blobs(n_samples=1000, centers=4, cluster_std=0.8, random_state=42)
+X[:, 1] *= 10  # تغییر مقیاس یک ویژگی
+
+# اجرای K-Means بدون نرمال‌سازی
+kmeans_no_scaling = KMeans(n_clusters=4, init='k-means++', n_init=10, algorithm='lloyd', random_state=42)
+start_time = time.time()
+labels_no_scaling = kmeans_no_scaling.fit_predict(X)
+time_no_scaling = time.time() - start_time
+
+# نرمال‌سازی داده‌ها
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# اجرای K-Means با نرمال‌سازی و الگوریتم 'elkan'
+kmeans_scaled = KMeans(n_clusters=4, init='k-means++', n_init=10, algorithm='elkan', random_state=42)
+start_time = time.time()
+labels_scaled = kmeans_scaled.fit_predict(X_scaled)
+time_scaled = time.time() - start_time
+
+# نمایش نتایج
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+ax1.scatter(X[:, 0], X[:, 1], c=labels_no_scaling, s=50, cmap='viridis')
+ax1.scatter(kmeans_no_scaling.cluster_centers_[:, 0], kmeans_no_scaling.cluster_centers_[:, 1], c='red', s=200, marker='X')
+ax1.set_title(f'No Scaling (Time: {time_no_scaling:.2f}s)')
+ax2.scatter(X_scaled[:, 0], X_scaled[:, 1], c=labels_scaled, s=50, cmap='viridis')
+ax2.scatter(kmeans_scaled.cluster_centers_[:, 0], kmeans_scaled.cluster_centers_[:, 1], c='red', s=200, marker='X')
+ax2.set_title(f'Scaled with Elkan (Time: {time_scaled:.2f}s)')
+plt.savefig('kmeans_scaling_comparison.png')
+        </pre>
+      </div>
+    </section>
+
+    <section class="bg-white rounded-lg shadow-md p-6">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-4">مزایا و معایب</h2>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <h3 class="text-xl font-semibold text-green-600 mb-2">مزایا</h3>
+          <ul class="list-disc list-inside text-gray-600">
+            <li>ساده و سریع</li>
+            <li>مناسب برای داده‌های با ابعاد متوسط</li>
+            <li>عملکرد خوب در خوشه‌های کروی</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-xl font-semibold text-red-600 mb-2">معایب</h3>
+          <ul class="list-disc list-inside text-gray-600">
+            <li>نیاز به مشخص کردن k از قبل</li>
+            <li>حساس به انتخاب اولیه مراکز</li>
+            <li>عملکرد ضعیف در خوشه‌های غیرکروی</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white rounded-lg shadow-md p-6">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-4">نکات کاربردی</h2>
+      <ul class="list-disc list-inside text-gray-600">
+        <li>برای انتخاب k مناسب، از روش آرنج (Elbow Method) یا Silhouette Score استفاده کنید.</li>
+        <li>همیشه داده‌ها را نرمال‌سازی کنید تا مقیاس‌های متفاوت نتایج را تحت تأثیر قرار ندهند.</li>
+        <li>برای داده‌های بزرگ، الگوریتم 'elkan' را امتحان کنید تا سرعت افزایش یابد.</li>
+        <li>مقدار n_init را برای داده‌های پیچیده افزایش دهید (مثلاً 20 یا 50).</li>
+        <li>برای خوشه‌های غیرکروی، الگوریتم‌های دیگر مثل DBSCAN را در نظر بگیرید.</li>
+      </ul>
+    </section>
+  </div>
+</body>
+</html>
